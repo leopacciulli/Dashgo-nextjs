@@ -1,21 +1,27 @@
-import { Table, Box, Flex, Heading, Button, Icon, Thead, Th, Tr, Td, Checkbox, Tbody, Text, useBreakpointValue } from '@chakra-ui/react'
+import { Table, Box, Flex, Heading, Button, Icon, Thead, Th, Tr, Td, Checkbox, Tbody, Text, useBreakpointValue, Spinner } from '@chakra-ui/react'
 import Header from '../../components/Header'
 import Sidebar from '../../components/Sidebar'
 import { RiAddLine } from 'react-icons/ri'
 import { Pagination } from '../../components/Pagination'
 import Link from 'next/link'
 import { useEffect } from 'react'
+import { useQuery } from 'react-query'
 
 export default function UsersList() {
+  const { data, isLoading, error } = useQuery('users', async () => {
+    const response = await fetch('http://localhost:3000/api/users')
+    const data = await response.json();
+
+    return data
+  })
+
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true
   })
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/users')
-      .then(response => response.json)
-      .then(data => console.log(data))
+    
   })
 
   return (
@@ -41,41 +47,54 @@ export default function UsersList() {
             </Link>
           </Flex>
 
-          <Table colorScheme="whiteAlpha">
-            <Thead>
-              <Tr>
-                <Th px={["4", "4", "6"]} color="gray.300" width="8">
-                  <Checkbox colorScheme="pink" />
-                </Th>
-                <Th>
-                  Usuário
-                </Th>
-                {isWideVersion && (
-                  <Th>
-                    Data de cadastro
-                  </Th>
-                )}
-              </Tr>
-            </Thead>
-            <Tbody>
-              <Tr>
-                <Td px={["4", "4", "6"]}>
-                  <Checkbox colorScheme="pink" />
-                </Td>
-                <Td>
-                  <Box>
-                    <Text fontWeight="bold">Leonardo</Text>
-                    <Text color="gray.300" fontSize="small">leo@gmail.com</Text>
-                  </Box>
-                </Td>
-                {isWideVersion && (
-                  <Td>04 de Abril, 2021</Td>
-                )}
-              </Tr>
-            </Tbody>
-          </Table>
+          {isLoading
+            ?  <Flex justify={'center'}>
+              <Spinner />
+            </Flex>
+            : error ? (
+              <Flex justify={'center'}>
+                <Text>Falha ao obter dados</Text>
+              </Flex>
+            ) : (
+              <>
+                <Table colorScheme="whiteAlpha">
+                  <Thead>
+                    <Tr>
+                      <Th px={["4", "4", "6"]} color="gray.300" width="8">
+                        <Checkbox colorScheme="pink" />
+                      </Th>
+                      <Th>
+                        Usuário
+                      </Th>
+                      {isWideVersion && (
+                        <Th>
+                          Data de cadastro
+                        </Th>
+                      )}
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    <Tr>
+                      <Td px={["4", "4", "6"]}>
+                        <Checkbox colorScheme="pink" />
+                      </Td>
+                      <Td>
+                        <Box>
+                          <Text fontWeight="bold">Leonardo</Text>
+                          <Text color="gray.300" fontSize="small">leo@gmail.com</Text>
+                        </Box>
+                      </Td>
+                      {isWideVersion && (
+                        <Td>04 de Abril, 2021</Td>
+                      )}
+                    </Tr>
+                  </Tbody>
+                </Table>
 
-          <Pagination />
+                <Pagination />
+              </>
+            )
+          }
         </Box>
       </Flex>
     </Box>    
