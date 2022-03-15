@@ -5,16 +5,15 @@ import { SidebarProvider } from '../contexts/SidebarContext'
 import { makeServer } from '../services/mirage'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
+import { queryClient } from '../services/queryClient'
 
 if (process.env.NODE_ENV === 'development') {
   makeServer()
 }
 
-const queryCliente = new QueryClient()
-
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <QueryClientProvider client={queryCliente}>  
+    <QueryClientProvider client={queryClient}>  
       <ChakraProvider resetCSS theme={theme}>
         <SidebarProvider>
           <Component {...pageProps} />
